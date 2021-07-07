@@ -19,7 +19,7 @@ namespace MonsterArena
         string name;
         int hp;
         int level = 1;
-        Random random = new Random();
+        static Random random = new Random();
         bool isSpawned;
 
         public Monster(string name)
@@ -35,6 +35,11 @@ namespace MonsterArena
                 Heal();
                 Console.WriteLine($"{this} enters the battle!");
             }
+        }
+
+        protected int GetDamage()
+        {
+            return baseStrength + bonusStrength;
         }
 
         public virtual int GetAttackIndex(List<MonsterData> monsters)
@@ -54,8 +59,8 @@ namespace MonsterArena
                 Console.WriteLine($"{this} attacks {target}, but it's already dead.");
                 return;
             }
-            int damage = baseStrength + bonusStrength;
-            bool isCrit = random.Next(0, 100) < baseLuck + bonusLuck;
+            int damage = GetDamage();
+            bool isCrit = random.Next(0, 100) < (baseLuck + bonusLuck);
             if (isCrit)
             {
                 damage *= 2;
@@ -75,8 +80,9 @@ namespace MonsterArena
                 bonusStrength += target.bonusStrength;
                 bonusVitality += target.bonusVitality;
                 bonusLuck += target.bonusLuck;
+                level += target.level;
                 Heal();
-                Console.WriteLine($"{target} dies! {this} is now level {++level}!");
+                Console.WriteLine($"{target} dies! {this} is now level {level}!");
             }
         }
 
